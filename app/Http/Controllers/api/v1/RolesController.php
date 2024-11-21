@@ -2,56 +2,57 @@
 
 namespace App\Http\Controllers\api\v1;
 
-use App\Models\Roles;
 use App\Http\Controllers\Controller;
+use App\Models\Roles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RolesController extends Controller
 {
-    public function index() 
+    public function index()
     {
         $roles = Roles::all();
         return response()->json([
             'status' => true,
-            'message' => 'Roles retrieved successfully',
-            'data' => $roles
+            'message' => 'roles retrieved successfully',
+            'roles' => $roles
         ], 200);
     }
 
-    public function show($id) 
+    public function store(Request $request)
     {
-        $roles = Roles::findOrFail($id);
-        return response()->json([
-            'status' => true,
-            'message' => 'Roles found successfuly',
-            'data' => $roles
-        ], 200);
-    }
-
-    public function store(Request $request) 
-    {
-        $validator = Validator::make($request->all(), [
+        $validate = Validator::make($request->all(),[
             'name' => 'required|string|max:255'
         ]);
 
-        if ($validator->fails()) {
+        if ($validate->fails()) {
             return response()->json([
                 'status' => false,
                 'message' => 'validation error',
-                'errors' => $validator->errors()
+                'errors' => $validate->errors()
             ], 422);
         }
 
         $roles = Roles::create($request->all());
         return response()->json([
             'status' => true,
-            'message' => 'Roles created successfully',
-            'data' => $roles
+            'message' => 'roles created successfully',
+            'roles' => $roles
         ], 200);
     }
 
-    public function update(Request $request, $id)
+
+    public function show(string $id)
+    {
+        $roles = Roles::findOrFail($id);
+        return response()->json([
+            'status' => true,
+            'message' => 'Roles found successfuly',
+            'roles' => $roles
+        ], 200);
+    }
+
+    public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255'
@@ -70,19 +71,19 @@ class RolesController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Roles updated successfully',
-            'data' => $roles
+            'message' => 'roles updated successfully',
+            'roles' => $roles
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $roles = Roles::findOrFail($id);
         $roles->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'Roles deleted successfully'
+            'message' => 'roles deleted successfully'
         ], 204);
     }
 }
