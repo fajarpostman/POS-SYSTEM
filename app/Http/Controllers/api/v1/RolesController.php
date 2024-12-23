@@ -38,7 +38,7 @@ class RolesController extends Controller
             'status' => true,
             'message' => 'roles created successfully',
             'roles' => $roles
-        ], 200);
+        ], 201);
     }
 
 
