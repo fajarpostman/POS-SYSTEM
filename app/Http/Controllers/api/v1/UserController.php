@@ -18,9 +18,6 @@ class UserController extends BaseController
         $this->middleware('auth:sanctum');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = User::all();
@@ -31,9 +28,6 @@ class UserController extends BaseController
         ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
@@ -66,9 +60,6 @@ class UserController extends BaseController
         
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $user = User::findOrFail($id);
@@ -79,9 +70,6 @@ class UserController extends BaseController
         ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
@@ -133,9 +121,6 @@ class UserController extends BaseController
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
