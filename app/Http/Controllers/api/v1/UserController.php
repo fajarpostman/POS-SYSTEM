@@ -84,9 +84,53 @@ class UserController extends BaseController
      */
     public function update(Request $request, string $id)
     {
+        $user = User::findOrFail($id);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'user not found'
+            ], 404);
+        }
+
         $validator = Validator::make($request->all(), [
-            
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255|unique:users,email,' . $user->id,
+            'password' => 'required|string|min:8',
+            'passwordconfirm' => 'required|string|same:password',
+            'roleid' => 'required|exists:roles,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
+
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        if ($request->has('roleid')) {
+            $user->roleid = $request->roleid;
+        }
+
+        $user->save();
+
+        return  response()->json([
+            'status' => true,
+            'message' => 'user updated successfully',
+            'user' => $user
+        ], 200);
     }
 
     /**
