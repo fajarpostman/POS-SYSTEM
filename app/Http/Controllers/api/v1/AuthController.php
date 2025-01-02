@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -87,12 +88,12 @@ class AuthController extends Controller
             : response()->json(['message' => __($status)], 400);
     }
 
-    public function reset(Request $request)
+    public function update(Request $request)
     {
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:users,email',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string|min:8'
         ]);
 
         $status = Password::reset(
@@ -101,12 +102,18 @@ class AuthController extends Controller
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->save();
+
+                $user->setRememberToken(Str::random(60));
             }
         );
 
         return $status === Password::PASSWORD_RESET
             ? response()->json(['message' => __($status)], 200)
             : response()->json(['message' => __($status)], 400);
+
+        // return $status === Password::PASSWORD_RESET
+        //     ? redirect()->route('')->with('status', __($status))
+        //     : redirect()->route('password.request')->withErrors(['email' => [__($status)]]);
     }
 }
 
